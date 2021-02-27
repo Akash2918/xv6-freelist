@@ -83,12 +83,24 @@ char*
 kalloc(void)
 {
   struct run *r;
-
+  //Creating new struct run pointer 
+  struct run *ptr;
   if(kmem.use_lock)
     acquire(&kmem.lock);
   r = kmem.freelist;
-  if(r)
-    kmem.freelist = r->next;
+  if(r){
+  //  kmem.freelist = r->next;
+  //Changing stack structure to queue structure
+  	if(r->next){
+		while(r->next){
+			ptr = r;
+			r = r->next;
+		}
+		ptr = r->next;
+	}else{
+		kmem.freelist = r->next;
+	}
+  }
   if(kmem.use_lock)
     release(&kmem.lock);
   return (char*)r;
